@@ -1,0 +1,6 @@
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\bin\Debug\GaRCSP.exe.config
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\obj\Debug\GaRCSP.csprojResolveAssemblyReference.cache
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\bin\Debug\GaRCSP.exe
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\bin\Debug\GaRCSP.pdb
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\obj\Debug\GaRCSP.exe
+c:\users\mithyber\documents\visual studio 2013\Projects\GaRCSP\GaRCSP\obj\Debug\GaRCSP.pdb
