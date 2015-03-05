@@ -73,7 +73,9 @@ namespace GaRCSP
             /*cout << "Insert expected min duration: ";
              * cin >> maxdur;*/
             maxdur = 50;
-            CDiophantine dp = new CDiophantine(workcount, pDurat, pWorker, workpreccount, pPrecCons, maxdur);
+            int reshav;
+            reshav = 3;
+            CDiophantine dp = new CDiophantine(workcount, pDurat, pWorker, workpreccount, pPrecCons, maxdur, reshav);
 
             int ans;
             ans = dp.Solve();

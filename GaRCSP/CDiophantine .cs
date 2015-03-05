@@ -53,11 +53,12 @@ namespace GaRCSP
         int workpreccount;
         PrecCons[] pPrecCons;
         int maxdur;
-        int newMaxDur;
+        int reshav;
+        int newMaxDur = 2147483647;
         gene[] population;//[MAXPOP];// Population.
         public const int MAXPOP = 25;
 
-        public CDiophantine(int tworkcount, int[] tpDurat, int[] tpWorker, int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur)
+        public CDiophantine(int tworkcount, int[] tpDurat, int[] tpWorker, int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur, int treshav)
         {// Constructor 
             workcount = tworkcount;
             pDurat = tpDurat;
@@ -65,6 +66,7 @@ namespace GaRCSP
             workpreccount = tworkpreccount;
             pPrecCons = tpPrecCons;
             maxdur = tmaxdur;
+            reshav = treshav;
             population = new gene[MAXPOP];
             for (int i = 0; i < MAXPOP; i++)
             {
@@ -106,7 +108,7 @@ namespace GaRCSP
 
                 iterations++;
                 //cout << "iterations = " << iterations << endl;
-                Console.WriteLine("iterations = " + iterations);
+                Console.WriteLine("iterations = " + iterations + " duration = " + Fitness(population[0]));
             }
 
             int ind = CreateFitnesses();
@@ -151,7 +153,7 @@ namespace GaRCSP
                         res = res + pWorker[j];
                     }
                 }
-                if (res > 3)
+                if (res > reshav)
                     return 0;
             }
             return 1;
@@ -221,7 +223,7 @@ namespace GaRCSP
                 //cout << "map " << Fitness(population[(*cur).second]) << endl;
                 temppop[i] = population[mapfit[i].act1];
             }
-            int[] tmpnwp = new int[MAXPOP];
+            /*int[] tmpnwp = new int[MAXPOP];
             for (int i = 0; i < MAXPOP; i++)
             {
                 tmpnwp[i] = 0;
@@ -243,9 +245,9 @@ namespace GaRCSP
                 }
                 tmpnwp[minin] = 1;
                 temppop[i] = population[minin];
-            }
-
-            newMaxDur = Fitness(temppop[0]);
+            }*/
+            //int tu = CreateFitnesses();
+            newMaxDur = Fitness(temppop[0]);/*population[tu].alleles[workcount-1];*/
             Random rand = new Random();
             //cout << "9th point" << endl;
             for (int i = 12; i < 22; i++)
@@ -265,23 +267,28 @@ namespace GaRCSP
 
             for (int i = 22; i < MAXPOP; i++)
             {
-                //int oops = 0;
+                //Console.WriteLine("i = " + i);
+                temppop[i].genes(workcount);
+                int oops = 0;
                 do
-                {
+                {                    
                     //Console.WriteLine("booo");
                     //cout << "booo" << endl;
-                    //if (oops < 50) {
-                    temppop[i].genes(workcount);
-                    for (int j = 0; j < workcount; j++)
-                    {
-                        temppop[i].alleles[j] = rand.Next(newMaxDur + 2);
-                    }
-                    //}
-                    /*else {
-                        for (int j = 0; j < workcount; j++) {
-                            temppop[i].alleles[j] = rand() % (newMaxDur + 2);
+                    if (oops < 100)
+                    {                        
+                        for (int j = 0; j < workcount; j++)
+                        {
+                            temppop[i].alleles[j] = rand.Next(newMaxDur + 1);
                         }
-                    }*/
+                    }
+                    else
+                    {
+                        for (int j = 0; j < workcount; j++)
+                        {
+                            temppop[i].alleles[j] = rand.Next(newMaxDur + 2);
+                        }
+                    }
+                    oops = oops + 1;
                 } while (ConstrCheck(temppop[i]) == 0);
             }
 
@@ -307,8 +314,12 @@ namespace GaRCSP
 
             //int first = rand() % 100;// Which parent comes first?
 
-            gene child = population[p1];// Child is all first parent initially.
-
+            gene child = new gene();
+            child.genes(workcount);
+            //child = population[p1];// Child is all first parent initially.
+            Array.Copy(population[p1].alleles, child.alleles,workcount);
+            child.likelihood = population[p1].likelihood;
+            //child.alleles[0] = 999;
             int[] tmpbr = new int[workcount];// = { 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < workcount; i++)
             {
@@ -337,7 +348,7 @@ namespace GaRCSP
                         minin = i;
                     }
                 }
-                child.alleles[minin] = population[p2].alleles[minin];
+                child.alleles[minin] = population[p2].alleles[minin];//nen
                 if (ConstrCheck(child) == 0)
                 {
                     int oops = 0;
@@ -345,7 +356,7 @@ namespace GaRCSP
                     {
                         if (oops < 50)
                         {
-                            child.alleles[minin] = rand.Next(maxdur + 1);
+                            child.alleles[minin] = rand.Next(/*maxdur*/population[p1].alleles[workcount-1] + 1);
                             oops = oops + 1;
                             //cout << "10th point" << endl;
                         }
@@ -355,7 +366,7 @@ namespace GaRCSP
                             {
                                 for (int j = 0; j < workcount; j++)
                                 {
-                                    child.alleles[j] = rand.Next(maxdur + 1);
+                                child.alleles[j] = rand.Next(maxdur + 1);
                                 }
                             } while (ConstrCheck(child) == 0);
                         }
