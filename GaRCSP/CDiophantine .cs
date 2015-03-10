@@ -47,21 +47,23 @@ namespace GaRCSP
     {
         int workcount;
         int[] pDurat;
-        int[] pWorker;
+        int resnum;
+        int[,] pWorker;
         /*int pDurat;
          * int pWorker;*/
         int workpreccount;
         PrecCons[] pPrecCons;
         int maxdur;
-        int reshav;
+        int[] reshav;
         int newMaxDur = 2147483647;
         gene[] population;//[MAXPOP];// Population.
         public const int MAXPOP = 25;
 
-        public CDiophantine(int tworkcount, int[] tpDurat, int[] tpWorker, int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur, int treshav)
+        public CDiophantine(int tworkcount, int[] tpDurat, int tresnum, int[,] tpWorker, int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur, int[] treshav)
         {// Constructor 
             workcount = tworkcount;
             pDurat = tpDurat;
+            resnum = tresnum;
             pWorker = tpWorker;
             workpreccount = tworkpreccount;
             pPrecCons = tpPrecCons;
@@ -143,18 +145,21 @@ namespace GaRCSP
                 if (gn.alleles[pPrecCons[i].act1 - 1] + pDurat[pPrecCons[i].act1 - 1] > gn.alleles[pPrecCons[i].act2 - 1])
                     return 0;
             }
-            for (int i = 0; i < maxdur; i++)
+            for (int k = 0; k < resnum; k++)
             {
-                int res = 0;
-                for (int j = 0; j < workcount; j++)
+                for (int i = 0; i < maxdur; i++)
                 {
-                    if ((gn.alleles[j] <= i) && (gn.alleles[j] + pDurat[j] > i))
+                    int res = 0;
+                    for (int j = 0; j < workcount; j++)
                     {
-                        res = res + pWorker[j];
+                        if ((gn.alleles[j] <= i) && (gn.alleles[j] + pDurat[j] > i))
+                        {
+                            res = res + pWorker[j,k];
+                        }
                     }
+                    if (res > reshav[k])
+                        return 0;
                 }
-                if (res > reshav)
-                    return 0;
             }
             return 1;
         }
