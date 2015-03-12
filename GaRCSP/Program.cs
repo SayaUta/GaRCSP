@@ -27,20 +27,20 @@ namespace GaRCSP
             pDurat[5] = 4;
             pDurat[6] = 2;
             pDurat[7] = 0;
-            int resnum = 2;
-            int[,] pWorker = new int[workcount, resnum];
-            /*for (int i = 0; i < workcount; i++){
+            int resnum = 1;//2;
+            /*int[,] pWorker = new int[workcount, resnum];
+             *for (int i = 0; i < workcount; i++){
              * cout << "Insert " << i + 1 << " activity resource usage: ";
              * cin >> pWorker[i];
-             * }*/
-            pWorker[0, 0] = 1; pWorker[0, 1] = 1;
-            pWorker[1, 0] = 1; pWorker[1, 1] = 1;
-            pWorker[2, 0] = 1; pWorker[2, 1] = 1;
-            pWorker[3, 0] = 1; pWorker[3, 1] = 1;
-            pWorker[4, 0] = 1; pWorker[4, 1] = 1;
-            pWorker[5, 0] = 1; pWorker[5, 1] = 1;
-            pWorker[6, 0] = 1; pWorker[6, 1] = 1;
-            pWorker[7, 0] = 0; pWorker[7, 0] = 0;
+             * }
+            pWorker[0, 0] = -1; pWorker[0, 1] = 1;
+            pWorker[1, 0] = -1; pWorker[1, 1] = 1;
+            pWorker[2, 0] = -1; pWorker[2, 1] = 1;
+            pWorker[3, 0] = -1; pWorker[3, 1] = 1;
+            pWorker[4, 0] = -1; pWorker[4, 1] = 1;
+            pWorker[5, 0] = -1; pWorker[5, 1] = 1;
+            pWorker[6, 0] = -1; pWorker[6, 1] = 1;
+            pWorker[7, 0] = 0; pWorker[7, 0] = 0;*/
             int workpreccount;
             workpreccount = 10;
             /*cout << "Insert number of precedence constraints: ";
@@ -65,8 +65,8 @@ namespace GaRCSP
              * cin >> maxdur;*/
             maxdur = 50;
             int[] reshav = new int[resnum];
-            reshav[0] = 3; reshav[1] = 2;
-            CDiophantine dp = new CDiophantine(workcount, pDurat, resnum, pWorker, workpreccount, pPrecCons, maxdur, reshav);
+            reshav[0] = 4; //reshav[1] = 2;
+            CDiophantine dp = new CDiophantine(workcount, pDurat, resnum, /*pWorker, */workpreccount, pPrecCons, maxdur, reshav);
 
             int ans;
             ans = dp.Solve();
@@ -82,14 +82,14 @@ namespace GaRCSP
              * cout << "d = " << gn.alleles[3] << "." << endl;
              * }*/
             gene gn = dp.GetGene(ans);
-            Console.WriteLine("1 = " + gn.alleles[0] + "\r\n");
-            Console.WriteLine("2 = " + gn.alleles[1] + "\r\n");
-            Console.WriteLine("3 = " + gn.alleles[2] + "\r\n");
-            Console.WriteLine("4 = " + gn.alleles[3] + "\r\n");
-            Console.WriteLine("5 = " + gn.alleles[4] + "\r\n");
-            Console.WriteLine("6 = " + gn.alleles[5] + "\r\n");
-            Console.WriteLine("7 = " + gn.alleles[6] + "\r\n");
-            Console.WriteLine("8 = " + gn.alleles[7] + "\r\n");
+            Console.WriteLine("1 = " + gn.alleles[0] + " worker ="+ gn.tpWorker[0,0] + "\r\n");
+            Console.WriteLine("2 = " + gn.alleles[1] + " worker =" + gn.tpWorker[1, 0] + "\r\n");
+            Console.WriteLine("3 = " + gn.alleles[2] + " worker =" + gn.tpWorker[2, 0] + "\r\n");
+            Console.WriteLine("4 = " + gn.alleles[3] + " worker =" + gn.tpWorker[3, 0] + "\r\n");
+            Console.WriteLine("5 = " + gn.alleles[4] + " worker =" + gn.tpWorker[4, 0] + "\r\n");
+            Console.WriteLine("6 = " + gn.alleles[5] + " worker =" + gn.tpWorker[5, 0] + "\r\n");
+            Console.WriteLine("7 = " + gn.alleles[6] + " worker =" + gn.tpWorker[6, 0] + "\r\n");
+            Console.WriteLine("8 = " + gn.alleles[7] + " worker =" + gn.tpWorker[7, 0] + "\r\n");
             /*cout << "a = " << gn.alleles[0] << "." << endl;
             cout << "b = " << gn.alleles[1] << "." << endl;
             cout << "c = " << gn.alleles[2] << "." << endl;

@@ -17,11 +17,13 @@ namespace GaRCSP
         static int WORKCOUNT;
         public int[] alleles;
         public float likelihood;
-        public int genes(int tmpworkc)
+        public int[,] tpWorker;
+        public int genes(int tmpworkc, int tmpresnum)
         {
             /*for (int i = 0; i<100; i++) {
                 alleles[i] = -1;
             }*/
+            tpWorker = new int[tmpworkc, tmpresnum];
             WORKCOUNT = tmpworkc;
             alleles = new int[tmpworkc];
             likelihood = 0;
@@ -48,7 +50,7 @@ namespace GaRCSP
         int workcount;
         int[] pDurat;
         int resnum;
-        int[,] pWorker;
+        //int[,] pWorker;
         /*int pDurat;
          * int pWorker;*/
         int workpreccount;
@@ -59,12 +61,12 @@ namespace GaRCSP
         gene[] population;//[MAXPOP];// Population.
         public const int MAXPOP = 25;
 
-        public CDiophantine(int tworkcount, int[] tpDurat, int tresnum, int[,] tpWorker, int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur, int[] treshav)
+        public CDiophantine(int tworkcount, int[] tpDurat, int tresnum, /*int[,] tpWorker,*/ int tworkpreccount, PrecCons[] tpPrecCons, int tmaxdur, int[] treshav)
         {// Constructor 
             workcount = tworkcount;
             pDurat = tpDurat;
             resnum = tresnum;
-            pWorker = tpWorker;
+            //pWorker = tpWorker;
             workpreccount = tworkpreccount;
             pPrecCons = tpPrecCons;
             maxdur = tmaxdur;
@@ -72,8 +74,74 @@ namespace GaRCSP
             population = new gene[MAXPOP];
             for (int i = 0; i < MAXPOP; i++)
             {
-                population[i].genes(tworkcount);
+                population[i].genes(tworkcount, tresnum);
             }
+            /*List<int> fw = new List<int>(); //массив списков всех путей
+            for (int i = 0; i < workcount; i++)
+            {
+                int flag = 1;
+                for (int j = 0; j < workpreccount; j++) 
+                {
+                    if (pPrecCons[j].act2 == i + 1)
+                        flag = 0;
+                }
+                if (flag == 1)
+                    fw.Add(i + 1);
+            }
+            int numberofways = 0;// fw.Count;
+            for (int i = 0; i < workcount; i++)
+            {
+                int flag = 0;
+                for (int j = 0; j < workpreccount; j++)
+                {
+                    if (pPrecCons[j].act1 == i + 1) 
+                        flag = flag + 1;
+                }
+                if (fw.Contains(i + 1))
+                {
+                    numberofways = numberofways + flag;
+                }
+                else if (flag > 1)
+                {
+                    numberofways = numberofways + flag - 1;
+                }
+            }
+            List<int>[] lst = new List<int>[numberofways];
+            for (int i = 0; i < numberofways; i++)
+            {
+                lst[i] = new List<int>();
+            }
+            int temp = 0;
+            foreach (int i in fw)
+            {
+                lst[temp].Add(i);
+                temp = temp + 1;
+            }
+            for (int i = 0; i < numberofways; i++)
+            {
+                while (lst[i].Last() != workcount)
+                {
+                    int jnow = -1;
+                    for (int j = 0; j < workpreccount; j++)
+                    {
+                        if (jnow == -1)
+                        {
+                            if (pPrecCons[j].act1 == lst[i].Last())
+                                lst[i].Add(pPrecCons[j].act2);
+                            jnow = pPrecCons[j].act1;
+                        }
+                        else if (jnow == pPrecCons[j].act1)
+                        {
+                            foreach (int k in lst[i])
+                            {
+                                lst[temp].Add(k);
+                                lst[temp].RemoveAt(lst[temp].Count - 1);
+                            }
+                            temp = temp + 1;
+                        }
+                    }
+                }
+            }*/
         }
         public int Solve()
         {// Solve the equation.
@@ -90,6 +158,7 @@ namespace GaRCSP
                     for (int j = 0; j < workcount; j++)
                     {// 0 and the result.
                         population[i].alleles[j] = /*rand() % (tmp + 1);//*/rand.Next(maxdur + 1);
+                        population[i].tpWorker[j, 0] = rand.Next(reshav[0])+1; //для одного ресурса
                     }
                 } while (ConstrCheck(population[i]) == 0);
                 //cout << "i = " << i << endl;
@@ -142,7 +211,8 @@ namespace GaRCSP
                 return 0;*/
             for (int i = 0; i < workpreccount; i++)
             {
-                if (gn.alleles[pPrecCons[i].act1 - 1] + pDurat[pPrecCons[i].act1 - 1] > gn.alleles[pPrecCons[i].act2 - 1])
+                //double t = Math.Ceiling(((double)pDurat[pPrecCons[i].act1 - 1] / (double)gn.tpWorker[pPrecCons[i].act1 - 1, 0]));
+                if (gn.alleles[pPrecCons[i].act1 - 1] + Math.Ceiling(((double)pDurat[pPrecCons[i].act1 - 1] / gn.tpWorker[pPrecCons[i].act1 - 1, 0])) > gn.alleles[pPrecCons[i].act2 - 1]) //для одного ресурса
                     return 0;
             }
             for (int k = 0; k < resnum; k++)
@@ -152,9 +222,9 @@ namespace GaRCSP
                     int res = 0;
                     for (int j = 0; j < workcount; j++)
                     {
-                        if ((gn.alleles[j] <= i) && (gn.alleles[j] + pDurat[j] > i))
+                        if ((gn.alleles[j] <= i) && (gn.alleles[j] + Math.Ceiling((double)pDurat[j] / gn.tpWorker[j,k]) > i))
                         {
-                            res = res + pWorker[j,k];
+                            res = res + gn.tpWorker[j, k];//pWorker[j,k];
                         }
                     }
                     if (res > reshav[k])
@@ -273,24 +343,34 @@ namespace GaRCSP
             for (int i = 22; i < MAXPOP; i++)
             {
                 //Console.WriteLine("i = " + i);
-                temppop[i].genes(workcount);
+                temppop[i].genes(workcount,resnum);
                 int oops = 0;
                 do
                 {                    
                     //Console.WriteLine("booo");
                     //cout << "booo" << endl;
-                    if (oops < 100)
+                    if (oops < 10000)
                     {                        
                         for (int j = 0; j < workcount; j++)
                         {
-                            temppop[i].alleles[j] = rand.Next(newMaxDur + 1);
+                            temppop[i].alleles[j] = rand.Next(newMaxDur /*+ 1*/);
+                            temppop[i].tpWorker[j, 0] = rand.Next(reshav[0]) + 1; //для одного ресурса
+                        }
+                    }
+                    else if (oops < 20000)
+                    {
+                        for (int j = 0; j < workcount; j++)
+                        {
+                            temppop[i].alleles[j] = rand.Next(newMaxDur + 1/*2*/);
+                            temppop[i].tpWorker[j, 0] = rand.Next(reshav[0]) + 1; //для одного ресурса
                         }
                     }
                     else
                     {
                         for (int j = 0; j < workcount; j++)
                         {
-                            temppop[i].alleles[j] = rand.Next(newMaxDur + 2);
+                            temppop[i].alleles[j] = rand.Next(newMaxDur + 2/*2*/);
+                            temppop[i].tpWorker[j, 0] = rand.Next(reshav[0]) + 1; //для одного ресурса
                         }
                     }
                     oops = oops + 1;
@@ -320,9 +400,10 @@ namespace GaRCSP
             //int first = rand() % 100;// Which parent comes first?
 
             gene child = new gene();
-            child.genes(workcount);
+            child.genes(workcount,resnum);
             //child = population[p1];// Child is all first parent initially.
             Array.Copy(population[p1].alleles, child.alleles,workcount);
+            Array.Copy(population[p1].tpWorker, child.tpWorker, workcount);
             child.likelihood = population[p1].likelihood;
             //child.alleles[0] = 999;
             int[] tmpbr = new int[workcount];// = { 0, 0, 0, 0, 0, 0, 0 };
